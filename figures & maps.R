@@ -9,7 +9,7 @@ library(writexl)
 library(scales)
 library(sf)
 library(remotes)
-library(rgdal)
+#library(rgdal)
 library(viridis)
 library(maps)
 library(cartography)
@@ -17,7 +17,7 @@ library(tidyverse)
 library(forcats)
 
 #histograms ------
-#svy_quant<-read_excel("C:/Users/cgait/OneDrive/Desktop/IDEEL/Rwanda nonpf/map & figure datasets/svy_quant.xlsx")
+svy_quant<-read_excel("C:/Users/cgait/OneDrive/Desktop/IDEEL/Rwanda nonpf/map & figure datasets/svy_quant.xlsx")
 rw_hist<-ggplot(data=svy_quant) + geom_histogram(aes(x=quantity, fill=species), bins=40, alpha=0.5) + 
   scale_fill_manual(values=c('pink', 'skyblue2', 'darkgoldenrod1', 'darkgreen'))+ xlim(-5,5)+
   theme(legend.key.size = unit(0.5, 'cm'), 
@@ -36,7 +36,7 @@ options(scipen = 999)
 rw_hist + labs(x="Parasitemia (log scale)", y="Count")+
   scale_x_log10(breaks = c(0.01, 0.10, 1.00, 10, 100, 1000, 10000), minor_breaks = NULL) +theme_test(base_size = 14)
 
-ggsave("histogram.png")
+#ggsave("histogram.png")
 
 #species categories histograms
 #pf_catcolors<-c('pink','magenta','darkmagenta','purple','orange') 
@@ -58,12 +58,12 @@ ggsave("histogram.png")
 
 #prevalence maps ------
 #shapefiles & datasets for maps
-svy_pbp <- read_excel("C:/Users/cgait/OneDrive/Desktop/Rwanda nonpf/map & figure datasets/svy_pbp.xlsx") 
-DHS_cluster <- read_excel("C:/Users/cgait/OneDrive/Desktop/Rwanda nonpf/rw_nonpf data/summary datasets/DHS_cluster.xlsx")
-africa_sf<-read_sf("C:/Users/cgait/OneDrive/Desktop/Rwanda nonpf/rw_nonpf data/data downloads/Africa_Boundaries-shp/Africa_Boundaries.shp")
-rw_bounds<-read_sf("C:/Users/cgait/OneDrive/Desktop/Rwanda nonpf/rw_nonpf data/data downloads/shapefiles/rw2015_boundary/RWA_adm0.shp")
-lake<-read_sf("C:/Users/cgait/OneDrive/Desktop/Rwanda nonpf/rw_nonpf data/data downloads/shapefiles/rwalakes/RWA_Lakes_NISR.shp")
-district<-read_sf("C:/Users/cgait/OneDrive/Desktop/Rwanda nonpf/rw_nonpf data/data downloads/shapefiles/rwa_district/District.shp")
+svy_pbp <- read_excel("C:/Users/cgait/OneDrive/Desktop/IDEEL/Rwanda nonpf/map & figure datasets/svy_pbp.xlsx") 
+DHS_cluster <- read_excel("C:/Users/cgait/OneDrive/Desktop/IDEEL/Rwanda nonpf/data/summary datasets/DHS_cluster.xlsx")
+africa_sf<-read_sf("C:/Users/cgait/OneDrive/Desktop/IDEEL/Rwanda nonpf/data/data downloads/Africa_Boundaries-shp/Africa_Boundaries.shp")
+rw_bounds<-read_sf("C:/Users/cgait/OneDrive/Desktop/IDEEL/Rwanda nonpf/data/data downloads/shapefiles/rw2015_boundary/RWA_adm0.shp")
+lake<-read_sf("C:/Users/cgait/OneDrive/Desktop/IDEEL/Rwanda nonpf/data/data downloads/shapefiles/rwalakes/RWA_Lakes_NISR.shp")
+district<-read_sf("C:/Users/cgait/OneDrive/Desktop/IDEEL/Rwanda nonpf/data/data downloads/shapefiles/rwa_district/District.shp")
 svy_district <- merge(district, svy_pbp, by='District')
 
 #background map
@@ -77,7 +77,7 @@ bounds<-rbind(bur, drc, tzn, uga)
 
 #lake fill variable
 lake$lakes<-"Lake"
-summary(lake)
+#summary(lake)
 lake$Lakes <- factor(lake$lakes)
 
 #prevalence maps with all CT values
@@ -184,7 +184,7 @@ ggplot() + geom_sf(data=bounds) + geom_sf(data=lake, fill="lightblue")+
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank()) + 
   labs(x="",y="",shape="Inclusion in Analysis", color="Transmission Intensity")
-ggsave("rw15_clusters.png")
+#ggsave("rw15_clusters.png")
   
 #shapes and colors for each species map
 pf_shape<-c(16,15,17,17,15)
@@ -195,7 +195,7 @@ full_shape_set<- c(16,16,16,16,15,17,17,15,18,18)
 
 pf_colors <- c('pink', 'maroon1', 'darkmagenta', 'darkblue', 'darkorange1')
 po_colors <- c('darkmagenta', 'darkorange1', 'deeppink','darkgoldenrod1')
-pv_colors <- c('darkgreen', 'darkblue', 'aquamarine3')
+pv_colors <- c('aquamarine4', 'darkblue', 'darkgreen')
 pm_colors<-c("aquamarine","darkmagenta","darkblue","deepskyblue","deeppink", "purple")
 colors <- c('pink','deepskyblue','gold','forestgreen','darkorchid1','blue','black','darkorange1','maroon1','maroon4')
 
@@ -293,11 +293,12 @@ ggsave("species_clusters.png")
 
 
 #forest plots----
-all_forest <- read_excel("C:/Users/cgait/OneDrive/Desktop/Rwanda nonpf/map & figure datasets/forest.xlsx")
-pf_only <- read_excel("map & figure datasets/forest.xlsx", sheet = "falciparum")
-pm_only <- read_excel("map & figure datasets/forest.xlsx", sheet = "malariae")
-po_only <- read_excel("map & figure datasets/forest.xlsx", sheet = "ovale")
-mixed <- read_excel("map & figure datasets/forest.xlsx", sheet = "mixed")
+all_forest <- read_excel("C:/Users/cgait/OneDrive/Desktop/IDEEL/Rwanda nonpf/map & figure datasets/forest.xlsx")
+pf_only <- all_forest %>% filter(species=="falciparum")
+pm_only <- all_forest %>% filter(species=="malariae")
+po_only <- all_forest %>% filter(species=="ovale")
+
+#mixed <- read_excel("map & figure datasets/forest.xlsx", sheet = "mixed")
 
 #plot colors
 colors<-c("hotpink1","royalblue","goldenrod2")
@@ -386,26 +387,24 @@ po_forest<-po_forest + scale_color_manual(values=c("goldenrod3"))
 print(po_forest)
 
 #mixed infections forest plot
-mixed_forest<-ggplot() + geom_hline(yintercept = 0, linetype='dashed')+
-  coord_flip(expand=TRUE)+
-  geom_pointrange(data=mixed, aes(x=term, y=estimate, color=species,
-      ymin=CIL_95, ymax=CIU_95), shape=15, size=2, 
-      position=position_dodge2(width = 0.9), fatten=0.1)+
-  geom_point(data=mixed, aes(x=term, y=estimate, color=species), 
-        shape=19, size=3)+
-  theme(legend.key.size = unit(1, 'cm'), 
-        legend.key.height = unit(1, 'cm'), 
-        legend.key.width = unit(1, 'cm'), 
-        legend.title = element_text(size=14), 
-        legend.text = element_text(size=14),
-        axis.text.y = element_text(size=14),
-        axis.text.x = element_text(size=14),
-        plot.caption = element_text(size=14))+theme_test(base_size = 16)+
-  labs(x="", y="Mixed Infection")
-mixed_forest<-mixed_forest + scale_color_manual(values=c("orchid4")) #+ ylim(-0.2,0.2)
+#mixed_forest<-ggplot() + geom_hline(yintercept = 0, linetype='dashed')+
+#  coord_flip(expand=TRUE)+
+#  geom_pointrange(data=mixed, aes(x=term, y=estimate, color=species,
+#      ymin=CIL_95, ymax=CIU_95), shape=15, size=2, 
+#      position=position_dodge2(width = 0.9), fatten=0.1)+
+#  geom_point(data=mixed, aes(x=term, y=estimate, color=species), 
+#        shape=19, size=3)+
+#  theme(legend.key.size = unit(1, 'cm'), 
+#        legend.key.height = unit(1, 'cm'), 
+#        legend.key.width = unit(1, 'cm'), 
+#        legend.title = element_text(size=14), 
+#        legend.text = element_text(size=14),
+#        axis.text.y = element_text(size=14),
+#        axis.text.x = element_text(size=14),
+#        plot.caption = element_text(size=14))+theme_test(base_size = 16)+
+#  labs(x="", y="Mixed Infection")
+#mixed_forest<-mixed_forest + scale_color_manual(values=c("orchid4")) #+ ylim(-0.2,0.2)
 #print(mixed_forest)
-
-#ggarrange(pf_forest, mixed_forest, ncol=2)
 
 #plot for associations stratified by cluster intensity
 #P. falciparum trans_int stratified plot
